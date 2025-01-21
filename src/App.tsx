@@ -90,7 +90,14 @@ function App() {
   };
 
   const choice_tags = Object.keys(MOLECULES).map(name => <option value={MOLECULES[name]}> {name} </option>);
+
   const [selectedPdb, setSelectedPdb] = useState(MOLECULES['Caffeine']);
+  const [pdbUrl, setPdbUrl] = useState(`https://threejs.org/examples/models/pdb/${selectedPdb}`);
+
+  const existingMoleculeHandler = event => setPdbUrl(`https://threejs.org/examples/models/pdb/${event.target.value}`);
+
+  const rcsbHandler = event =>
+    setPdbUrl(`https://files.rcsb.org/download/${document.getElementById('pdb_id').value}.pdb`);
 
   return (
     <>
@@ -98,16 +105,28 @@ function App() {
 
       <div>
         <p>choose an existing molecule</p>
-        <select name="cars" id="cars" value={selectedPdb} onChange={e => setSelectedPdb(e.target.value)}>
+        <select name="existing_molecules" value={selectedPdb} onChange={existingMoleculeHandler}>
           {choice_tags}
         </select>
+      </div>
+
+      <div>
+        <p>or choose a protein id from rcsb</p>
+
+        <label>
+          https://files.rcsb.org/download/
+          <input id="pdb_id" type="text" placeholder="XXXX" defaultValue="1RCN"/>
+          .pdb
+        </label>
+        <br />
+        <input type="button" value="submit" onClick={rcsbHandler} />
       </div>
 
       <div id="canvas-container" style={{ position: 'relative', width: 1000, height: 1000 }}>
         <Canvas>
           <CameraControls makeDefault />
 
-          <Scene url={`https://threejs.org/examples/models/pdb/${selectedPdb}`} />
+          <Scene url={pdbUrl} />
         </Canvas>
       </div>
     </>
